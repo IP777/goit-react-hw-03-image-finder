@@ -3,7 +3,17 @@ import "./ButtonLoadMore.css";
 
 const ButtonLoadMore = ({ setPagination }) => {
 	//console.log("ButtonLoadMore");
-	return <button onClick={setPagination}>Load more ....</button>;
+
+	// window.scrollTo({
+	// 	top: document.documentElement.scrollHeight,
+	// 	behavior: 'smooth',
+	//   });
+
+	return (
+		<button className="Button2" onClick={setPagination}>
+			Load more ....
+		</button>
+	);
 };
 
 export default ButtonLoadMore;

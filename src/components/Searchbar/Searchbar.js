@@ -12,7 +12,6 @@ export default class Searchbar extends Component {
 
 	handleSubmit = (e) => {
 		e.preventDefault();
-		/* eslint-disable-next-line */
 		this.props.onSubmit(this.state.query);
 
 		this.setState({ query: "" });
