@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import Searchbar from "./Searchbar/Searchbar";
 import ImageGallery from "./ImageGallery/ImageGallery";
-import ButtonLoadMore from "./ImageGallery/ButtonLoadMore/ButtonLoadMore";
+import ButtonLoadMore from "./ButtonLoadMore/ButtonLoadMore";
 import Loader from "react-loader-spinner";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./App.css";
 
 import { axiosRequest } from "./axiosRequest/AxiosRequest";
@@ -14,81 +13,70 @@ export default class App extends Component {
 		request: "",
 		pagination: 1,
 		isLoading: false,
+		error: null,
 	};
 
-	componentDidUpdate(prevProps, prevState) {
-		const { request: prevGallery, pagination: prevPagination } = prevState;
-		const { request: nextGallery, pagination: nextPagination } = this.state;
+	fetchArticles = (value, pagination) => {
+		this.setState({ isLoading: true });
 
-		console.log("prev", prevGallery, "next", nextGallery);
+		axiosRequest(value, pagination)
+			.then((response) => {
+				if (pagination > 1) {
+					this.setState({
+						gallery: [...this.state.gallery, ...response.data.hits],
+						request: value,
+					});
+				} else {
+					this.setState({
+						gallery: response.data.hits,
+						request: value,
+					});
+				}
+			})
+			.catch((error) => this.setState({ error }))
+			.finally(() => this.setState({ isLoading: false }));
+	};
 
-		if (prevGallery !== nextGallery) {
-			//console.log(nextGallery);
-			this.fetchArticles(nextGallery);
-		}
+	setPagination = () => {
+		const newPagination = this.state.pagination + 1;
 
-		//Если пагинация больше предидущей то отправляем новый запрос
-		if (prevPagination !== nextPagination) {
-			//console.log(nextPagination);
-			this.fetchArticles(this.state.request);
-		}
+		this.fetchArticles(this.state.request, newPagination);
 
-		//При изменение плавно опускаем страницу в низ
+		this.setState({
+			pagination: newPagination,
+		});
+	};
+
+	componentDidUpdate() {
 		window.scrollTo({
 			top: document.documentElement.scrollHeight,
 			behavior: "smooth",
 		});
 	}
 
-	componentDidMount() {
-		//this.fetchArticles(this.state.request);
-	}
-
-	fetchArticles = (value) => {
-		this.setState({ isLoading: true });
-
-		axiosRequest(value, this.state.pagination)
-			.then((response) => {
-				//Если пагинация больше 1 то генерируется новая галерея + старая
-				if (this.state.pagination > 1) {
-					this.setState((state) => ({
-						gallery: [...state.gallery, ...response.data.hits],
-						request: value,
-					}));
-				} else {
-					this.setState((state) => ({
-						gallery: response.data.hits,
-						request: value,
-					}));
-				}
-			})
-			.catch(console.log)
-			.finally(() => this.setState({ isLoading: false }));
-	};
-
-	setPagination = () => {
-		this.setState((state) => ({ pagination: state.pagination + 1 }));
-	};
-
 	render() {
-		const { gallery, isLoading } = this.state;
+		const { gallery, isLoading, error } = this.state;
 		return (
 			<div className="App">
 				<Searchbar onSubmit={this.fetchArticles} />
-				{isLoading ? (
+				{gallery.length > 0 && <ImageGallery gallery={gallery} />}
+				{isLoading && (
 					<Loader
 						type="ThreeDots"
 						color="#00BFFF"
 						height={80}
 						width={80}
 						timeout={3000} //3 secs
-						style={{ justifySelf: "center" }}
+						className="Spinner"
 					/>
-				) : (
-					<ImageGallery gallery={gallery} />
 				)}
 				{gallery.length > 0 && (
 					<ButtonLoadMore setPagination={this.setPagination} />
+				)}
+				{error && (
+					<h3 className="Error">
+						Oops something happened: {error.message}
+					</h3>
 				)}
 			</div>
 		);

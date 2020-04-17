@@ -6,7 +6,6 @@ export default class ImageGalleryItem extends Component {
 	state = { click: false };
 
 	escFunction(event) {
-		console.log("event");
 		if (event.keyCode === 27) {
 			this.setState({
 				click: false,
