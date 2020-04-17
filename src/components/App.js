@@ -2,13 +2,11 @@ import React, { Component } from "react";
 import Searchbar from "./Searchbar/Searchbar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 import ButtonLoadMore from "./ImageGallery/ButtonLoadMore/ButtonLoadMore";
-import axios from "axios";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./App.css";
 
-const BASE_URL = "https://pixabay.com/api/";
-const API_KEY = "15197033-6a0a9e6d0bedb15a0a6a5ba9a";
+import { axiosRequest } from "./axiosRequest/AxiosRequest";
 
 export default class App extends Component {
 	state = {
@@ -22,34 +20,47 @@ export default class App extends Component {
 		const { request: prevGallery, pagination: prevPagination } = prevState;
 		const { request: nextGallery, pagination: nextPagination } = this.state;
 
+		console.log("prev", prevGallery, "next", nextGallery);
+
 		if (prevGallery !== nextGallery) {
-			console.log(nextGallery);
+			//console.log(nextGallery);
 			this.fetchArticles(nextGallery);
 		}
 
+		//Если пагинация больше предидущей то отправляем новый запрос
 		if (prevPagination !== nextPagination) {
-			console.log(nextPagination);
+			//console.log(nextPagination);
 			this.fetchArticles(this.state.request);
 		}
+
+		//При изменение плавно опускаем страницу в низ
+		window.scrollTo({
+			top: document.documentElement.scrollHeight,
+			behavior: "smooth",
+		});
 	}
 
 	componentDidMount() {
-		this.fetchArticles(this.state.request);
+		//this.fetchArticles(this.state.request);
 	}
 
 	fetchArticles = (value) => {
 		this.setState({ isLoading: true });
 
-		axios
-			.get(
-				`${BASE_URL}?key=${API_KEY}&q=${value}&image_type=photo&per_page=12&page=${this.state.pagination}`
-			)
+		axiosRequest(value, this.state.pagination)
 			.then((response) => {
-				this.setState((state) => ({
-					gallery: response.data.hits,
-					request: value,
-				}));
-				//console.log(this.state.gallery);
+				//Если пагинация больше 1 то генерируется новая галерея + старая
+				if (this.state.pagination > 1) {
+					this.setState((state) => ({
+						gallery: [...state.gallery, ...response.data.hits],
+						request: value,
+					}));
+				} else {
+					this.setState((state) => ({
+						gallery: response.data.hits,
+						request: value,
+					}));
+				}
 			})
 			.catch(console.log)
 			.finally(() => this.setState({ isLoading: false }));
@@ -62,7 +73,7 @@ export default class App extends Component {
 	render() {
 		const { gallery, isLoading } = this.state;
 		return (
-			<>
+			<div className="App">
 				<Searchbar onSubmit={this.fetchArticles} />
 				{isLoading ? (
 					<Loader
@@ -71,6 +82,7 @@ export default class App extends Component {
 						height={80}
 						width={80}
 						timeout={3000} //3 secs
+						style={{ justifySelf: "center" }}
 					/>
 				) : (
 					<ImageGallery gallery={gallery} />
@@ -78,7 +90,7 @@ export default class App extends Component {
 				{gallery.length > 0 && (
 					<ButtonLoadMore setPagination={this.setPagination} />
 				)}
-			</>
+			</div>
 		);
 	}
 }
