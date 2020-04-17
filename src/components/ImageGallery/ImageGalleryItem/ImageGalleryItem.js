@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./ImageGalleryItem.css";
-import Modal from "./../Modal/Modal";
+import Modal from "./modal/Modal";
 
 export default class ImageGalleryItem extends Component {
 	state = { click: false };

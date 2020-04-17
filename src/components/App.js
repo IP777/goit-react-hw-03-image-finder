@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import Searchbar from "./Searchbar/Searchbar";
-import ImageGallery from "./ImageGallery/ImageGallery";
-import ButtonLoadMore from "./ButtonLoadMore/ButtonLoadMore";
+import Searchbar from "./searchbar/Searchbar";
+import ImageGallery from "./imageGallery/ImageGallery";
+import ButtonLoadMore from "./buttonLoadMore/ButtonLoadMore.js";
 import Loader from "react-loader-spinner";
 import "./App.css";
 
