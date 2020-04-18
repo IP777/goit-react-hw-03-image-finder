@@ -12,8 +12,17 @@ export default class Modal extends Component {
 		alt: PropTypes.string,
 	};
 
+	escFunction(event) {
+		if (event.keyCode === 27) {
+			this.props.clickState();
+		}
+	}
+
+	componentDidMount() {
+		document.addEventListener("keydown", this.escFunction.bind(this));
+	}
+
 	componentWillUnmount() {
-		//Убераю Listner -> вешаю в родителе функция handelClick()
 		document.removeEventListener("keydown", this.escFunction);
 	}
 

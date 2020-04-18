@@ -9,28 +9,20 @@ export default class ImageGalleryItem extends Component {
 	state = { click: false };
 
 	static propTypes = {
-		key: PropTypes.number.isRequired,
 		webformatURL: PropTypes.string.isRequired,
 		largeImageURL: PropTypes.string.isRequired,
 		tags: PropTypes.string,
 	};
 
-	escFunction(event) {
-		if (event.keyCode === 27) {
-			this.setState({
-				click: false,
-			});
-		}
-	}
-
-	handelClick = () => {
-		//вешаю Listner на документ -> Убираю в компоненте Modal функция componentWillUnmount()
-		if (!this.state.click) {
-			document.addEventListener("keydown", this.escFunction.bind(this));
-		}
-
+	handelModalOn = () => {
 		this.setState({
-			click: !this.state.click,
+			click: true,
+		});
+	};
+
+	handelOffModal = () => {
+		this.setState({
+			click: false,
 		});
 	};
 
@@ -44,14 +36,14 @@ export default class ImageGalleryItem extends Component {
 						src={webformatURL}
 						alt={tags}
 						className="ImageGalleryItem-image"
-						onClick={this.handelClick}
+						onClick={this.handelModalOn}
 					/>
 				</li>
 				{click && (
 					<Modal
 						src={largeImageURL}
 						alt={tags}
-						clickState={this.handelClick}
+						clickState={this.handelOffModal}
 					/>
 				)}
 			</>
