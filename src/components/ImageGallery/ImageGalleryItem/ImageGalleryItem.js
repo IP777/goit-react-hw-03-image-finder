@@ -15,10 +15,6 @@ export default class ImageGalleryItem extends Component {
 		tags: PropTypes.string,
 	};
 
-	static propTypes = {
-		onSubmit: PropTypes.func.isRequired,
-	};
-
 	escFunction(event) {
 		if (event.keyCode === 27) {
 			this.setState({
