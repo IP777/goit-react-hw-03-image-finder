@@ -1,10 +1,19 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+//---------------------------------------
 import "./Modal.css";
 
 export default class Modal extends Component {
 	state = {};
 
+	static propTypes = {
+		src: PropTypes.string.isRequired,
+		clickState: PropTypes.func.isRequired,
+		alt: PropTypes.string,
+	};
+
 	componentWillUnmount() {
+		//Убераю Listner -> вешаю в родителе функция handelClick()
 		document.removeEventListener("keydown", this.escFunction);
 	}
 

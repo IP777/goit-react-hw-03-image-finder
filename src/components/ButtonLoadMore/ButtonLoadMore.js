@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+//---------------------------------------
 import "./ButtonLoadMore.css";
 
 const ButtonLoadMore = ({ setPagination }) => {
@@ -7,6 +9,10 @@ const ButtonLoadMore = ({ setPagination }) => {
 			Load more ....
 		</button>
 	);
+};
+
+ButtonLoadMore.propTypes = {
+	setPagination: PropTypes.func.isRequired,
 };
 
 export default ButtonLoadMore;

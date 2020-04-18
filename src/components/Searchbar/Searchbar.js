@@ -1,8 +1,14 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+//---------------------------------------
 import "./Searchbar.css";
 
 export default class Searchbar extends Component {
 	state = { query: "" };
+
+	static propTypes = {
+		onSubmit: PropTypes.func.isRequired,
+	};
 
 	handleChange = (e) => {
 		this.setState({
